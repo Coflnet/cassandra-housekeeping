@@ -11,8 +11,4 @@ COPY . .
 
 RUN go build .
 
-FROM alpine:3.14
-
-COPY --from=builder /app/cassandra-housekeeping /usr/local/bin/cassandra-housekeeping
-
-CMD cassandra-housekeeping
+CMD sh -c /app/cassandra-housekeeping
