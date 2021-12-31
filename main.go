@@ -84,7 +84,7 @@ func CheckTraces(before time.Time) {
 	log.Info().Msgf("finished deleting %d traces, checked %d traces", deleteCount, checkCount)
 
 	if err := iter.Close(); err != nil {
-		log.Fatal().Err(err).Msgf("")
+		log.Error().Err(err).Msgf("stop executing")
 	}
 }
 
