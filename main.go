@@ -54,7 +54,7 @@ func CheckTraces(before time.Time) {
 
 	ctx, _ := context.WithTimeout(context.Background(), time.Duration(time.Minute*1))
 	iter := session.Query("SELECT start_time, trace_id, span_id, operation_name FROM jaeger_v1.traces").WithContext(ctx).Iter()
-	deleteCount := 0
+	deleteCount, checkCount := 0, 0
 	var m = make(map[string]int)
 	var wg sync.WaitGroup
 	for iter.MapScan(row) {
@@ -75,12 +75,13 @@ func CheckTraces(before time.Time) {
 			go delete(trace_id, span_id, &wg)
 			deleteCount++
 		}
+		checkCount++
 
 		row = make(map[string]interface{})
 	}
 
 	wg.Wait()
-	log.Info().Msgf("finished deleting %d traces", deleteCount)
+	log.Info().Msgf("finished deleting %d traces, checked %d traces", deleteCount, checkCount)
 
 	if err := iter.Close(); err != nil {
 		log.Fatal().Err(err).Msgf("")
